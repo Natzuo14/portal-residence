@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('https://imgur.com/aK301KC.jpg') no-repeat center center/cover;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 5%; /* Adjusted higher so it does not block your head */
+            text-align: center;
+        }
+
+        .logo img {
+            width: 180px;
+            height: auto;
+        }
+
+        .portal-box {
+            background: linear-gradient(to bottom, rgba(0, 60, 100, 0.8), rgba(50, 90, 120, 0.8)); /* Blue-gray */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            width: 320px;
+            position: absolute;
+            bottom: 18%;
+        }
+
+        .portal-box h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .portal-box p {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background: grey;
+            cursor: not-allowed;
+        }
+
+        a {
+            color: yellow;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .terms-modal {
+            display: none;
+            position: fixed;
+            background: rgba(0, 0, 0, 0.6);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .terms-content {
+            background: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 10px;
+            text-align: left;
+            max-height: 50%;
+            overflow-y: auto;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .terms-content h3 {
+            text-align: center;
+        }
+
+        .terms-content p {
+            margin-bottom: 10px;
+        }
+
+        .terms-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .terms-footer label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Properly show the checkbox */
+        #termsCheckbox {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+
+        #closeTerms {
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+        }
+
+        #closeTerms:disabled {
+            background: grey;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="https://imgur.com/r2R6qUA.png" alt="Logo">
+    </div>
+
+    <div class="portal-box">
+        <h2>Welcome Aboard!</h2>
+        <p>What's the Magic Word?</p>
+        <input type="text" placeholder="Open Sesame! Enter Here!">
+        <br>
+        <a href="#" id="showTerms">Read Terms and Conditions First</a>
+        <br><br>
+        <button id="connectBtn" disabled>Hop In!</button>
+    </div>
+
+    <div class="terms-modal" id="termsModal">
+        <div class="terms-content">
+            <h3>Terms and Conditions</h3>
+            <p>1. <strong>Network Isolation</strong> – All devices are managed and isolated for security. Connected devices cannot communicate with each other.</p>
+            <p>2. <strong>Limited Access</strong> – Usage is restricted to approved activities; any unauthorized access attempts may result in disconnection.</p>
+            <p>3. <strong>No Liability</strong> – We are not responsible for any data loss, security breaches, or service interruptions.</p>
+            <p>4. <strong>Fair Usage</strong> – Excessive bandwidth usage may result in throttling or temporary suspension.</p>
+            <p>5. <strong>Acceptance</strong> – By connecting, you agree to these terms.</p>
+
+            <div class="terms-footer">
+                <label>
+                    <input type="checkbox" id="termsCheckbox">
+                    I have read and agree to the terms
+                </label>
+                <button id="closeTerms" disabled>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const termsCheckbox = document.getElementById("termsCheckbox");
+            const connectBtn = document.getElementById("connectBtn");
+            const termsModal = document.getElementById("termsModal");
+            const showTerms = document.getElementById("showTerms");
+            const closeTerms = document.getElementById("closeTerms");
+            const termsContent = document.querySelector(".terms-content");
+
+            // Show Terms Modal
+            showTerms.addEventListener("click", function(event) {
+                event.preventDefault();
+                termsModal.style.display = "flex";
+            });
+
+            // Enable checkbox & Close button only after scrolling to bottom
+            termsContent.addEventListener("scroll", function() {
+                if (termsContent.scrollTop + termsContent.clientHeight >= termsContent.scrollHeight) {
+                    closeTerms.disabled = false;
+                }
+            });
+
+            // Close Terms Modal Only After Checking the Box
+            closeTerms.addEventListener("click", function() {
+                if (termsCheckbox.checked) {
+                    termsModal.style.display = "none";
+                }
+            });
+
+            // Enable "Hop In!" Button Only When Checkbox is Checked
+            termsCheckbox.addEventListener("change", function() {
+                connectBtn.disabled = !termsCheckbox.checked;
+            });
+        });
+    </script>
+</body>
+</html>
